@@ -2,7 +2,7 @@ require 'CSV'
 
 # Setup parameters
 file = './transactions.csv'
-start_date = "11/01/2016"
+START_DATE = "11/01/2016"
 
 # CONSTANTS
 ### Groceries ###
@@ -103,14 +103,41 @@ NONE = [
 ]
 
 
-def main(file, start_date)
-
-  puts "Date|Description|Amount|Original_Description|Notes"
+def main(file)
 
   transactions = read_file(file)
   transactions.shift # removes the header from the mint export
 
-  process(transactions, start_date)
+  groceries = transactions.select{|transaction|
+    GROCERIES.include?(transaction[:category])
+  }.sort_by{|t| t[:date]}
+
+  dining = transactions.select{|transaction|
+    DINING.include?(transaction[:category])
+  }.sort_by{|t| t[:date]}
+
+  travel = transactions.select{|transaction|
+    TRAVEL.include?(transaction[:category])
+  }.sort_by{|t| t[:date]}
+
+  purchases = transactions.select{|transaction|
+    PURCHASES.include?(transaction[:category])
+  }.sort_by{|t| t[:date]}
+
+  none = transactions.select{|transaction|
+    NONE.include?(transaction[:category])
+  }.sort_by{|t| t[:date]}
+
+  puts "\nGroceries"
+  process(groceries)
+  puts "\nDining"
+  process(dining)
+  puts "\nGroceries"
+  process(travel)
+  puts "\nPurchases"
+  process(purchases)
+  puts "\nNone"
+  process(none)
 end
 
 def read_file(file)
@@ -140,14 +167,16 @@ def read_file(file)
   transactions
 end
 
-def process(transaction_group, start_date)
+def process(transaction_group)
+  puts "Date|Description|Amount|Original_Description|Notes"
+
   transaction_group.each do |transaction|
-    processing(transaction, start_date)
+    processing(transaction)
   end
 end
 
-def processing(transaction, start_date)
-  internal_start_date = Date.strptime(start_date, '%m/%d/%Y')
+def processing(transaction)
+  internal_start_date = Date.strptime(START_DATE, '%m/%d/%Y')
   internal_transaction_date = Date.strptime(transaction[:date], '%m/%d/%Y')
 
   if internal_transaction_date > internal_start_date
@@ -159,4 +188,4 @@ def processing(transaction, start_date)
   end
 end
 
-main(file, start_date)
+main(file)

@@ -132,7 +132,7 @@ def main(file)
   process(groceries)
   puts "\nDining"
   process(dining)
-  puts "\nGroceries"
+  puts "\nTravel"
   process(travel)
   puts "\nPurchases"
   process(purchases)
@@ -170,9 +170,12 @@ end
 def process(transaction_group)
   puts "Date|Description|Amount|Original_Description|Notes"
 
+  sum = 0
   transaction_group.each do |transaction|
-    processing(transaction)
+    amount = processing(transaction)
+    sum = sum + amount.to_f
   end
+  puts "Total: $#{sum}"
 end
 
 def processing(transaction)
@@ -180,11 +183,16 @@ def processing(transaction)
   internal_transaction_date = Date.strptime(transaction[:date], '%m/%d/%Y')
 
   if internal_transaction_date > internal_start_date
+    amount = transaction[:amount].to_f
+
     if transaction[:transaction_type] == "credit"
-      transaction[:amount] = "-#{transaction[:amount]}"
+      amount = amount * -1
     end
 
-    puts "#{transaction[:date]}|#{transaction[:description]}|#{transaction[:amount]}|#{transaction[:original_description]}|#{transaction[:notes]}"
+
+    puts "#{transaction[:date]}|#{transaction[:description]}|#{amount}|#{transaction[:original_description]}|#{transaction[:notes]}"
+
+    amount
   end
 end
 

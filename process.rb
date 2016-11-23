@@ -107,16 +107,14 @@ def main(file, start_date)
 
   puts "Date|Description|Amount|Original_Description|Notes"
 
-  results = read_file(file)
-  results.shift # removes the header from the mint export
+  transactions = read_file(file)
+  transactions.shift # removes the header from the mint export
 
-  results.each do |result|
-    processing(result, start_date)
-  end
+  process(transactions, start_date)
 end
 
 def read_file(file)
-  results = []
+  transactions = []
   CSV.foreach(file) do |row|
     # Core Info
     date = row[0]
@@ -129,7 +127,7 @@ def read_file(file)
     original_description = row[2]
     notes = row[8]
 
-    results << {
+    transactions << {
       date: date,
       description: description,
       amount: amount,
@@ -139,19 +137,25 @@ def read_file(file)
       transaction_type: transaction_type
     }
   end
-  results
+  transactions
 end
 
-def processing(result, start_date)
+def process(transaction_group, start_date)
+  transaction_group.each do |transaction|
+    processing(transaction, start_date)
+  end
+end
+
+def processing(transaction, start_date)
   internal_start_date = Date.strptime(start_date, '%m/%d/%Y')
-  internal_transaction_date = Date.strptime(result[:date], '%m/%d/%Y')
+  internal_transaction_date = Date.strptime(transaction[:date], '%m/%d/%Y')
 
   if internal_transaction_date > internal_start_date
-    if result[:transaction_type] == "credit"
-      result[:amount] = "-#{result[:amount]}"
+    if transaction[:transaction_type] == "credit"
+      transaction[:amount] = "-#{transaction[:amount]}"
     end
 
-    puts "#{result[:date]}|#{result[:description]}|#{result[:amount]}|#{result[:original_description]}|#{result[:notes]}"
+    puts "#{transaction[:date]}|#{transaction[:description]}|#{transaction[:amount]}|#{transaction[:original_description]}|#{transaction[:notes]}"
   end
 end
 

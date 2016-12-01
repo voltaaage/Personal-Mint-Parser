@@ -2,7 +2,7 @@ require 'CSV'
 
 # Setup parameters
 file = './transactions.csv'
-START_DATE = "11/01/2016"
+START_DATE = "10/01/2016"
 
 # CONSTANTS
 ### Groceries ###
@@ -128,16 +128,26 @@ def main(file)
     NONE.include?(transaction[:category])
   }.sort_by{|t| t[:date]}
 
-  puts "\nGroceries"
-  process(groceries)
-  puts "\nDining"
-  process(dining)
-  puts "\nTravel"
-  process(travel)
-  puts "\nPurchases"
-  process(purchases)
-  puts "\nNone"
-  process(none)
+  CSV.open("./results.csv", "wb") do |csv|
+
+    group_header("Groceries", csv)
+    process(groceries, csv)
+    group_header("Dining", csv)
+    process(dining, csv)
+    group_header("Travel", csv)
+    process(travel, csv)
+    group_header("Purchases", csv)
+    process(purchases, csv)
+    group_header("None", csv)
+    process(none, csv)
+  end
+
+end
+
+def group_header(name, csv)
+  puts "\n#{name}"
+  csv << [""]
+  csv << [name]
 end
 
 def read_file(file)
@@ -167,30 +177,41 @@ def read_file(file)
   transactions
 end
 
-def process(transaction_group)
-  puts "Date|Description|Amount|Original_Description|Notes"
+def process(transaction_group, csv)
+  puts "Date|Description|Amount|Category|Original_Description|Notes"
+  csv << [ "Date", "Description", "Amount", "Category", "Original_Description", "Notes"]
 
   sum = 0
   transaction_group.each do |transaction|
-    amount = processing(transaction)
+    amount = processing(transaction, csv)
     sum = sum + amount.to_f
+    sum = sum.round(2)
   end
+
   puts "Total: $#{sum}"
+  csv << ["Total: $#{sum}"]
 end
 
-def processing(transaction)
+def processing(transaction, csv)
   internal_start_date = Date.strptime(START_DATE, '%m/%d/%Y')
   internal_transaction_date = Date.strptime(transaction[:date], '%m/%d/%Y')
 
-  if internal_transaction_date > internal_start_date
+  if internal_transaction_date >= internal_start_date
     amount = transaction[:amount].to_f
 
     if transaction[:transaction_type] == "credit"
       amount = amount * -1
     end
 
-
-    puts "#{transaction[:date]}|#{transaction[:description]}|#{amount}|#{transaction[:original_description]}|#{transaction[:notes]}"
+    csv_row = []
+    csv_row << transaction[:date]
+    csv_row << transaction[:description]
+    csv_row << amount
+    csv_row << transaction[:category]
+    csv_row << transaction[:original_description]
+    csv_row << transaction[:notes]
+    puts csv_row.join("|")
+    csv << csv_row
 
     amount
   end

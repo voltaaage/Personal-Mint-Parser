@@ -2,7 +2,8 @@ require 'CSV'
 
 # Setup parameters
 file = './transactions.csv'
-START_DATE = "11/01/2016"
+START_DATE = "12/01/2016"
+END_DATE = "12/31/2016"
 
 # CONSTANTS
 ### Groceries ###
@@ -221,9 +222,11 @@ end
 
 def processing(transaction, csv)
   internal_start_date = Date.strptime(START_DATE, '%m/%d/%Y')
+  internal_end_date = Date.strptime(END_DATE, '%m/%d/%Y')
+
   internal_transaction_date = Date.strptime(transaction[:date], '%m/%d/%Y')
 
-  if internal_transaction_date >= internal_start_date
+  if internal_transaction_date >= internal_start_date && internal_transaction_date <= internal_end_date
     amount = transaction[:amount].to_f
 
     if transaction[:transaction_type] == "credit"

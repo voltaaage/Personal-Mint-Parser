@@ -2,7 +2,7 @@ require 'CSV'
 
 # Setup parameters
 file = './transactions.csv'
-START_DATE = "10/01/2016"
+START_DATE = "11/01/2016"
 
 # CONSTANTS
 ### Groceries ###
@@ -56,7 +56,6 @@ PURCHASES = [
   "Hotel",
   "Internet",
   "Legal",
-  "Mobile Phone",
   "Movies & DVDs",
   "Music",
   "Newspapers & Magazines",
@@ -71,32 +70,42 @@ PURCHASES = [
   "Sports"
 ]
 
+RECURRING_PURCHASES = [
+  "Gym",
+  "Mobile Phone"
+]
+
+INCOME = [
+  "Income",
+  "Mortgage & Rent",
+  "Interest Income",
+  "Paycheck",
+  "Reimbursement"
+]
+
+BANKING = [
+  "Auto Payment",
+  "Investments",
+  "Transfer",
+  "Credit Card Payment"
+]
+
 ### None      ###
 NONE = [
   "ATM Fee",
-  "Auto Payment",
   "Bank Fee",
   "Cash & ATM",
   "Charity",
-  "Credit Card Payment",
   "Fees & Charges",
   "Finance Charge",
   "Financial Advisor",
-  "Gym",
-  "Income",
-  "Interest Income",
-  "Investments",
   "Late Fee",
   "Misc Expenses",
-  "Mortgage & Rent",
-  "Paycheck",
-  "Reimbursement",
   "Service Fee",
   "Shipping",
   "State Tax",
   "Stocks",
   "Taxes",
-  "Transfer",
   "Transfer for Cash Spending",
   "Tuition",
   "Uncategorized"
@@ -124,6 +133,18 @@ def main(file)
     PURCHASES.include?(transaction[:category])
   }.sort_by{|t| t[:date]}
 
+  recurring_purchases = transactions.select{|transaction|
+    RECURRING_PURCHASES.include?(transaction[:category])
+  }.sort_by{|t| t[:date]}
+
+  income = transactions.select{|transaction|
+    INCOME.include?(transaction[:category])
+  }.sort_by{|t| t[:date]}
+
+  banking = transactions.select{|transaction|
+    BANKING.include?(transaction[:category])
+  }.sort_by{|t| t[:date]}
+
   none = transactions.select{|transaction|
     NONE.include?(transaction[:category])
   }.sort_by{|t| t[:date]}
@@ -138,6 +159,12 @@ def main(file)
     process(travel, csv)
     group_header("Purchases", csv)
     process(purchases, csv)
+    group_header("Recurring Purchases", csv)
+    process(recurring_purchases, csv)
+    group_header("Income", csv)
+    process(income, csv)
+    group_header("Banking", csv)
+    process(banking, csv)
     group_header("None", csv)
     process(none, csv)
   end

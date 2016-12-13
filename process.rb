@@ -118,58 +118,41 @@ def main(file)
   transactions = read_file(file)
   transactions.shift # removes the header from the mint export
 
-  groceries = transactions.select{|transaction|
-    GROCERIES.include?(transaction[:category])
-  }.sort_by{|t| t[:date]}
+  groceries = parse_transactions(transactions, GROCERIES)
 
-  dining = transactions.select{|transaction|
-    DINING.include?(transaction[:category])
-  }.sort_by{|t| t[:date]}
-
-  travel = transactions.select{|transaction|
-    TRAVEL.include?(transaction[:category])
-  }.sort_by{|t| t[:date]}
-
-  purchases = transactions.select{|transaction|
-    PURCHASES.include?(transaction[:category])
-  }.sort_by{|t| t[:date]}
-
-  recurring_purchases = transactions.select{|transaction|
-    RECURRING_PURCHASES.include?(transaction[:category])
-  }.sort_by{|t| t[:date]}
-
-  income = transactions.select{|transaction|
-    INCOME.include?(transaction[:category])
-  }.sort_by{|t| t[:date]}
-
-  banking = transactions.select{|transaction|
-    BANKING.include?(transaction[:category])
-  }.sort_by{|t| t[:date]}
-
-  none = transactions.select{|transaction|
-    NONE.include?(transaction[:category])
-  }.sort_by{|t| t[:date]}
+  dining = parse_transactions(transactions, GROCERIES)
+  travel = parse_transactions(transactions, TRAVEL)
+  purchases = parse_transactions(transactions, PURCHASES)
+  recurring_purchases = parse_transactions(transactions, RECURRING_PURCHASES)
+  income = parse_transactions(transactions, INCOME)
+  banking = parse_transactions(transactions, BANKING)
+  none = parse_transactions(transactions, NONE)
 
   CSV.open("./results.csv", "wb") do |csv|
 
-    group_header("Groceries", csv)
-    process(groceries, csv)
-    group_header("Dining", csv)
-    process(dining, csv)
-    group_header("Travel", csv)
-    process(travel, csv)
-    group_header("Purchases", csv)
-    process(purchases, csv)
-    group_header("Recurring Purchases", csv)
-    process(recurring_purchases, csv)
-    group_header("Income", csv)
-    process(income, csv)
-    group_header("Banking", csv)
-    process(banking, csv)
-    group_header("None", csv)
-    process(none, csv)
+    # Add sums
+    category_data("Groceries", groceries, csv)
+    category_data("Dining", dining, csv)
+    category_data("Travel", travel, csv)
+    category_data("Purchases", purchases, csv)
+    category_data("Recurring Purchases", recurring_purchases, csv)
+    category_data("Income", income, csv)
+    category_data("Banking", banking, csv)
+    category_data("None", none, csv)
   end
 
+end
+
+def parse_transactions(transactions, category)
+  transactions.select{|transaction|
+    category.include?(transaction[:category])
+  }.sort_by{|t| t[:date]}
+end
+
+def category_data(title, transactions, csv)
+    group_header(title, csv)
+    sum = process(transactions, csv)
+    sum
 end
 
 def group_header(name, csv)
@@ -218,6 +201,7 @@ def process(transaction_group, csv)
 
   puts "Total: $#{sum}"
   csv << ["Total: $#{sum}"]
+  sum
 end
 
 def processing(transaction, csv)

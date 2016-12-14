@@ -13,32 +13,13 @@ def main(file)
   transactions = read_file(file)
   transactions.shift # removes the header from the mint export
 
-  groceries = parse_transactions(transactions, GROCERIES)
-
-  dining = parse_transactions(transactions, DINING)
-  travel = parse_transactions(transactions, TRAVEL)
-  purchases = parse_transactions(transactions, PURCHASES)
-  recurring_purchases = parse_transactions(transactions, RECURRING_PURCHASES)
-  income = parse_transactions(transactions, INCOME)
-  banking = parse_transactions(transactions, BANKING)
-  none = parse_transactions(transactions, NONE)
-
-  # CSV.open("./results.csv", "a") do |csv|
-
-  #   # Add sums
-  #   category_data("Groceries", groceries, csv)
-  #   category_data("Dining", dining, csv)
-  #   category_data("Travel", travel, csv)
-  #   category_data("Purchases", purchases, csv)
-  #   category_data("Recurring Purchases", recurring_purchases, csv)
-  #   category_data("Income", income, csv)
-  #   category_data("Banking", banking, csv)
-  #   category_data("None", none, csv)
-  # end
+  CATEGORIES.each do |title, categories|
+    parse_transactions(transactions, title, categories)
+  end
 
 end
 
-def parse_transactions(transactions, category)
+def parse_transactions(transactions, title, category)
   sorted_transactions = transactions.select{|transaction|
     category.include?(transaction[:category])
   }.sort_by{|t| t[:date]}
@@ -46,7 +27,7 @@ def parse_transactions(transactions, category)
   CSV.open("./results.csv", "a") do |csv|
 
     # Add sums
-    category_data("Title", sorted_transactions, csv)
+    category_data(title, sorted_transactions, csv)
   end
 end
 

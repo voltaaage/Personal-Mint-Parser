@@ -8,15 +8,20 @@ END_DATE = "12/31/2016"
 
 
 def main(file)
-
-  CSV.open("./results.csv", "wb")
+  CSV.open("./results.csv", "wb") # New file
   transactions = read_file(file)
   transactions.shift # removes the header from the mint export
 
+  sum = 0
   CATEGORIES.each do |title, categories|
-    parse_transactions(transactions, title, categories)
+    category_sum = parse_transactions(transactions, title, categories)
+    sum = sum + category_sum
   end
 
+  CSV.open("./results.csv", "a") do |csv|
+    csv << [""]
+    csv << ["Total of all Transactions: ", sum]
+  end
 end
 
 def parse_transactions(transactions, title, category)
@@ -25,16 +30,14 @@ def parse_transactions(transactions, title, category)
   }.sort_by{|t| t[:date]}
 
   CSV.open("./results.csv", "a") do |csv|
-
-    # Add sums
-    category_data(title, sorted_transactions, csv)
+    category_sum = process_category_data(title, sorted_transactions, csv)
   end
 end
 
-def category_data(title, transactions, csv)
-    group_header(title, csv)
-    sum = process(transactions, csv)
-    sum
+def process_category_data(title, transactions, csv)
+  group_header(title, csv)
+  sum = process(transactions, csv)
+  sum
 end
 
 def group_header(name, csv)
@@ -82,7 +85,7 @@ def process(transaction_group, csv)
   end
 
   puts "Total: $#{sum}"
-  csv << ["Total: $#{sum}"]
+  csv << ["Total: ", "#{sum}"]
   sum
 end
 

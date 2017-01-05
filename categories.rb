@@ -62,10 +62,12 @@ CATEGORIES = {
   ],
   "Income": [
     "Income",
-    "Mortgage & Rent",
     "Interest Income",
     "Paycheck",
     "Reimbursement"
+  ],
+  "Rent": [
+    "Mortgage & Rent"
   ],
   "Banking": [
     "Auto Payment",

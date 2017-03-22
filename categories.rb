@@ -24,7 +24,6 @@ CATEGORIES = {
     "Amusement",
     "Bonus",
     "Books",
-    "Business Services",
     "Check",
     "Clothing",
     "Dentist",
@@ -71,9 +70,10 @@ CATEGORIES = {
   ],
   "Banking": [
     "Auto Payment",
+    "Business Services",
+    "Credit Card Payment",
     "Investments",
-    "Transfer",
-    "Credit Card Payment"
+    "Transfer"
   ],
   "None": [
     "ATM Fee",

@@ -3,8 +3,8 @@ require './categories'
 
 # Setup parameters
 file = './transactions_example.csv'
-START_DATE = "01/01/2017"
-END_DATE = "01/30/2017"
+START_DATE = "01/01/2016"
+END_DATE = "05/30/2017"
 FILENAME = "./results-7-17.csv"
 
 # TODO: switch the start and end date to be 2014 -> today
@@ -17,17 +17,58 @@ def main(file)
   transactions = read_file(file)
   transactions.shift # removes the header from the mint export
 
-  sum = 0
-  CATEGORIES.each do |title, categories|
-    category_sum = parse_transactions(transactions, title, categories)
-    sum = sum + category_sum
-  end
+  months = collect_months(transactions)
+  months.each do |month|
+      puts "MONTH: #{month}"
+      sum = 0
+      monthly_transactions = collect_month_transactions(transactions, month)
+      # puts monthly_transactions
+      # require 'byebug'; byebug
+      CATEGORIES.each do |title, categories|
+          category_sum = parse_transactions(monthly_transactions, title, categories)
+          sum = sum + category_sum
+      end
 
-  CSV.open(FILENAME, "a") do |csv|
-    csv << [""]
-    csv << ["Total of all Transactions: ", sum]
+      CSV.open(FILENAME, "a") do |csv|
+          csv << [""]
+          csv << ["Total of all Transactions: ", sum]
+      end
   end
 end
+
+def collect_months(transactions)
+    months = transactions.map do |transaction|
+        date = transaction[:date]
+        Date.strptime(date, '%m/%d/%Y').strftime('%m/%Y') if date
+    end
+
+    months.uniq
+end
+
+def collect_month_transactions(transactions, month)
+      month_transactions = transactions.select do |transaction|
+
+          start_of_month = Date.strptime(month, '%m/%Y').strftime('%m/%d/%Y')
+          start_of_month = Date.strptime(start_of_month, '%m/%d/%Y')
+          end_of_month = Date.strptime(month, '%m/%Y').next_month.strftime('%m/%d/%Y')
+          end_of_month = Date.strptime(end_of_month, '%m/%d/%Y')
+          transaction_date = Date.strptime(transaction[:date], '%m/%d/%Y')
+
+          # puts transaction_date
+          # puts  start_of_month
+          # puts  end_of_month
+          # puts transaction_date >= start_of_month && transaction_date <= end_of_month
+          transaction_date >= start_of_month && transaction_date <= end_of_month
+      end
+      month_transactions
+end
+
+# def testing
+#     require 'Date'
+#     month = '02/2017'
+#     start_of_month = Date.strptime(month, '%m/%Y').strftime('%m/%d/%Y')
+#     end_of_month = Date.strptime(month, '%m/%Y').next_month.strftime('%m/%d/%Y')
+# end
 
 def parse_transactions(transactions, title, category)
   sorted_transactions = transactions.select{|transaction|
@@ -95,12 +136,16 @@ def process(transaction_group, csv)
 end
 
 def processing(transaction, csv)
-  internal_start_date = Date.strptime(START_DATE, '%m/%d/%Y')
-  internal_end_date = Date.strptime(END_DATE, '%m/%d/%Y')
+  start_date = Date.strptime(START_DATE, '%m/%d/%Y')
+  end_date = Date.strptime(END_DATE, '%m/%d/%Y')
 
-  internal_transaction_date = Date.strptime(transaction[:date], '%m/%d/%Y')
+  transaction_date = Date.strptime(transaction[:date], '%m/%d/%Y')
 
-  if internal_transaction_date >= internal_start_date && internal_transaction_date <= internal_end_date
+  # puts transaction_date
+  # puts  start_date
+  # puts  end_date
+  # puts transaction_date >= start_date && transaction_date <= end_date
+  if transaction_date >= start_date && transaction_date <= end_date
     amount = transaction[:amount].to_f
 
     if transaction[:transaction_type] == "credit"

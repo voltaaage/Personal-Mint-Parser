@@ -2,9 +2,9 @@ require 'CSV'
 require './categories'
 
 # Setup parameters
-file = './transactions.csv'
-START_DATE = "01/01/2018"
-END_DATE = "05/30/2018"
+file = './transactions_example.csv'
+START_DATE = "01/01/2017"
+END_DATE = "01/30/2017"
 FILENAME = "./results-7-17.csv"
 
 # TODO: switch the start and end date to be 2014 -> today

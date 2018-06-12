@@ -1,10 +1,15 @@
 require 'CSV'
+require "active_support/core_ext/date"
+require "active_support/core_ext/time"
+
 require './categories'
 
 # Setup parameters
-file = './transactions_example.csv'
-START_DATE = "01/01/2016"
-END_DATE = "05/30/2017"
+file = './transactions.csv'
+START_DATE = "01/01/2013"
+END_DATE = Date.today.strftime('%m/%d/%Y')
+START_DATE = Date.strptime(START_DATE, '%m/%d/%Y')
+END_DATE = Date.strptime(END_DATE, '%m/%d/%Y')
 FILENAME = "./results-7-17.csv"
 
 # TODO: switch the start and end date to be 2014 -> today
@@ -48,27 +53,14 @@ end
 def collect_month_transactions(transactions, month)
       month_transactions = transactions.select do |transaction|
 
-          start_of_month = Date.strptime(month, '%m/%Y').strftime('%m/%d/%Y')
-          start_of_month = Date.strptime(start_of_month, '%m/%d/%Y')
-          end_of_month = Date.strptime(month, '%m/%Y').next_month.strftime('%m/%d/%Y')
-          end_of_month = Date.strptime(end_of_month, '%m/%d/%Y')
+          start_of_month = Date.strptime(month, '%m/%Y').at_beginning_of_month
+          end_of_month = Date.strptime(month, '%m/%Y').at_end_of_month
           transaction_date = Date.strptime(transaction[:date], '%m/%d/%Y')
 
-          # puts transaction_date
-          # puts  start_of_month
-          # puts  end_of_month
-          # puts transaction_date >= start_of_month && transaction_date <= end_of_month
           transaction_date >= start_of_month && transaction_date <= end_of_month
       end
       month_transactions
 end
-
-# def testing
-#     require 'Date'
-#     month = '02/2017'
-#     start_of_month = Date.strptime(month, '%m/%Y').strftime('%m/%d/%Y')
-#     end_of_month = Date.strptime(month, '%m/%Y').next_month.strftime('%m/%d/%Y')
-# end
 
 def parse_transactions(transactions, title, category)
   sorted_transactions = transactions.select{|transaction|
@@ -136,16 +128,9 @@ def process(transaction_group, csv)
 end
 
 def processing(transaction, csv)
-  start_date = Date.strptime(START_DATE, '%m/%d/%Y')
-  end_date = Date.strptime(END_DATE, '%m/%d/%Y')
-
   transaction_date = Date.strptime(transaction[:date], '%m/%d/%Y')
 
-  # puts transaction_date
-  # puts  start_date
-  # puts  end_date
-  # puts transaction_date >= start_date && transaction_date <= end_date
-  if transaction_date >= start_date && transaction_date <= end_date
+  if transaction_date >= START_DATE && transaction_date <= END_DATE
     amount = transaction[:amount].to_f
 
     if transaction[:transaction_type] == "credit"
@@ -164,10 +149,6 @@ def processing(transaction, csv)
 
     amount
   end
-end
-
-def create_csv_row
-
 end
 
 main(file)

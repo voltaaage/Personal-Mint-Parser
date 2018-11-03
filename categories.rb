@@ -18,7 +18,8 @@ CATEGORIES = {
     "Parking",
     "Public Transportation",
     "Rental Car & Taxi",
-    "Travel"
+    "Travel",
+    "Vacation"
   ],
   "Purchases": [
     "Amusement",

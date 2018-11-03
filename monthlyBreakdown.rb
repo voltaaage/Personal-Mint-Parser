@@ -140,6 +140,13 @@ def processing(transaction, csv)
       amount = amount * -1
     end
 
+    csv << create_csv_row(transaction, amount)
+    amount
+  end
+
+end
+
+def create_csv_row(transaction, amount)
     csv_row = []
     csv_row << transaction[:date]
     csv_row << transaction[:description]
@@ -147,11 +154,8 @@ def processing(transaction, csv)
     csv_row << transaction[:category]
     csv_row << transaction[:original_description]
     csv_row << transaction[:notes]
-    puts csv_row.join("|")
-    csv << csv_row
-
-    amount
-  end
+    # puts csv_row.join("|")
+    csv_row
 end
 
 main(file)

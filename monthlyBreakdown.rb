@@ -122,7 +122,8 @@ def process(transaction_group, csv)
 
   sum = 0
   transaction_group.each do |transaction|
-    amount = processing(transaction, csv)
+    amount = process_amount(transaction)
+    add_transaction_to_csv(transaction, csv, amount)
     sum = sum + amount.to_f
     sum = sum.round(2)
   end
@@ -132,22 +133,16 @@ def process(transaction_group, csv)
   sum
 end
 
-def processing(transaction, csv)
+def add_transaction_to_csv(transaction, csv, amount)
   transaction_date = Date.strptime(transaction[:date], DATE_FORMAT)
-
   if transaction_date >= START_DATE && transaction_date <= END_DATE
-    amount = process_amount(transaction)
     csv << create_csv_row(transaction, amount)
-    amount
   end
-
 end
 
 def process_amount(transaction)
     amount = transaction[:amount].to_f
-    if transaction[:transaction_type] == "credit"
-      amount = amount * -1
-    end
+    amount = amount * -1 if transaction[:transaction_type] == "credit"
     amount
 end
 
@@ -163,4 +158,4 @@ def create_csv_row(transaction, amount)
     csv_row
 end
 
-main(file)
+# main(file)

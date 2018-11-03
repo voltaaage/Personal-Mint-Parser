@@ -15,6 +15,7 @@ showInputs[8].click()
 showInputs[9].click()
 showInputs[10].click()
 showInputs[12].click()
+showInputs[13].click()
 showInputs[17].click()
 showInputs[19].click()
 

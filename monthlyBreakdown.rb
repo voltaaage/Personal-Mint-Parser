@@ -13,7 +13,7 @@ ninety_days_ago = (now - 90)
 END_DATE = Date.today.strftime('%m/%d/%Y')
 START_DATE = ninety_days_ago
 END_DATE = Date.strptime(END_DATE, '%m/%d/%Y')
-FILENAME = "./monthly_breakdown_results.csv"
+FILENAME = "./results_monthly_breakdown.csv"
 
 # TODO: switch the start and end date to be 2014 -> today
 # TODO: Organize into each month

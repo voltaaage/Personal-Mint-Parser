@@ -136,16 +136,19 @@ def processing(transaction, csv)
   transaction_date = Date.strptime(transaction[:date], DATE_FORMAT)
 
   if transaction_date >= START_DATE && transaction_date <= END_DATE
-    amount = transaction[:amount].to_f
-
-    if transaction[:transaction_type] == "credit"
-      amount = amount * -1
-    end
-
+    amount = process_amount(transaction)
     csv << create_csv_row(transaction, amount)
     amount
   end
 
+end
+
+def process_amount(transaction)
+    amount = transaction[:amount].to_f
+    if transaction[:transaction_type] == "credit"
+      amount = amount * -1
+    end
+    amount
 end
 
 def create_csv_row(transaction, amount)

@@ -5,12 +5,15 @@ require "active_support/core_ext/time"
 require './categories'
 
 # Setup parameters
+# START_DATE = "01/01/2013"
+# START_DATE = Date.strptime(START_DATE, '%m/%d/%Y')
 file = './transactions.csv'
-START_DATE = "01/01/2013"
+now = Date.today
+ninety_days_ago = (now - 90)
 END_DATE = Date.today.strftime('%m/%d/%Y')
-START_DATE = Date.strptime(START_DATE, '%m/%d/%Y')
+START_DATE = ninety_days_ago
 END_DATE = Date.strptime(END_DATE, '%m/%d/%Y')
-FILENAME = "./results-7-17.csv"
+FILENAME = "./monthly_breakdown_results.csv"
 
 # TODO: switch the start and end date to be 2014 -> today
 # TODO: Organize into each month

@@ -3,8 +3,8 @@ require './categories'
 
 # Setup parameters
 file = './transactions.csv'
-START_DATE = "08/01/2018"
-END_DATE = "08/30/2018"
+START_DATE = "06/01/2018"
+END_DATE = "06/30/2018"
 
 
 def main(file)

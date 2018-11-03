@@ -10,9 +10,11 @@ require './categories'
 file = './transactions.csv'
 now = Date.today
 ninety_days_ago = (now - 90)
-END_DATE = Date.today.strftime('%m/%d/%Y')
+DATE_FORMAT = '%m/%d/%Y'
+MONTH_FORMAT = '%m/%Y'
+END_DATE = Date.today.strftime(DATE_FORMAT)
 START_DATE = ninety_days_ago
-END_DATE = Date.strptime(END_DATE, '%m/%d/%Y')
+END_DATE = Date.strptime(END_DATE, DATE_FORMAT)
 FILENAME = "./results_monthly_breakdown.csv"
 
 # TODO: switch the start and end date to be 2014 -> today
@@ -47,7 +49,7 @@ end
 def collect_months(transactions)
     months = transactions.map do |transaction|
         date = transaction[:date]
-        Date.strptime(date, '%m/%d/%Y').strftime('%m/%Y') if date
+        Date.strptime(date, DATE_FORMAT).strftime(MONTH_FORMAT) if date
     end
 
     months.uniq
@@ -56,9 +58,9 @@ end
 def collect_month_transactions(transactions, month)
       month_transactions = transactions.select do |transaction|
 
-          start_of_month = Date.strptime(month, '%m/%Y').at_beginning_of_month
-          end_of_month = Date.strptime(month, '%m/%Y').at_end_of_month
-          transaction_date = Date.strptime(transaction[:date], '%m/%d/%Y')
+          start_of_month = Date.strptime(month, MONTH_FORMAT).at_beginning_of_month
+          end_of_month = Date.strptime(month, MONTH_FORMAT).at_end_of_month
+          transaction_date = Date.strptime(transaction[:date], DATE_FORMAT)
 
           transaction_date >= start_of_month && transaction_date <= end_of_month
       end
@@ -131,7 +133,7 @@ def process(transaction_group, csv)
 end
 
 def processing(transaction, csv)
-  transaction_date = Date.strptime(transaction[:date], '%m/%d/%Y')
+  transaction_date = Date.strptime(transaction[:date], DATE_FORMAT)
 
   if transaction_date >= START_DATE && transaction_date <= END_DATE
     amount = transaction[:amount].to_f
@@ -154,7 +156,7 @@ def create_csv_row(transaction, amount)
     csv_row << transaction[:category]
     csv_row << transaction[:original_description]
     csv_row << transaction[:notes]
-    # puts csv_row.join("|")
+    puts csv_row.join("|")
     csv_row
 end
 

@@ -103,41 +103,53 @@ def read_file(file)
     original_description = row[2]
     notes = row[8]
 
-    transactions << {
-      date: date,
-      description: description,
-      amount: amount,
-      category: category,
-      original_description: original_description,
-      notes: notes,
-      transaction_type: transaction_type
-    }
+    if (date != 'Date' && date_within_date_range(date))
+        transactions << {
+          date: date,
+          description: description,
+          amount: amount,
+          category: category,
+          original_description: original_description,
+          notes: notes,
+          transaction_type: transaction_type
+        }
+    end
   end
   transactions
 end
 
 def process(transaction_group, csv)
-  puts "Date|Description|Amount|Category|Original_Description|Notes"
-  csv << [ "Date", "Description", "Amount", "Category", "Original_Description", "Notes"]
+    puts group_table_headers_console_output
+    csv << group_table_headers_csv_output
 
   sum = 0
   transaction_group.each do |transaction|
     amount = process_amount(transaction)
-    add_transaction_to_csv(transaction, csv, amount)
+    csv << create_csv_row(transaction, amount) if transaction_within_date_range(transaction)
     sum = sum + amount.to_f
-    sum = sum.round(2)
   end
 
+  sum = sum.round(2)
   puts "Total: $#{sum}"
   csv << ["Total: ", "#{sum}"]
   sum
 end
 
-def add_transaction_to_csv(transaction, csv, amount)
-  transaction_date = Date.strptime(transaction[:date], DATE_FORMAT)
-  if transaction_date >= START_DATE && transaction_date <= END_DATE
-    csv << create_csv_row(transaction, amount)
-  end
+def group_table_headers_console_output
+  "Date|Description|Amount|Category|Original_Description|Notes"
+end
+
+def group_table_headers_csv_output
+  [ "Date", "Description", "Amount", "Category", "Original_Description", "Notes"]
+end
+
+def date_within_date_range(date)
+  transaction_date = Date.strptime(date, DATE_FORMAT)
+  transaction_date >= START_DATE && transaction_date <= END_DATE
+end
+
+def transaction_within_date_range(transaction)
+    date_within_date_range(transaction[:date])
 end
 
 def process_amount(transaction)
@@ -158,4 +170,4 @@ def create_csv_row(transaction, amount)
     csv_row
 end
 
-# main(file)
+main(file)

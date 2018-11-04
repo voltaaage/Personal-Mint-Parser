@@ -1,6 +1,9 @@
 require 'minitest/autorun'
 require './monthlyBreakdown.rb'
 
+DATE_FORMAT = '%m/%d/%Y'
+MONTH_FORMAT = '%m/%Y'
+
 describe 'process_amount' do
     before do
         @transaction = {

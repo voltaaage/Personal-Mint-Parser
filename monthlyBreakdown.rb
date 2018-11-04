@@ -4,36 +4,25 @@ require "active_support/core_ext/time"
 
 require './categories'
 
-# Setup parameters
-# START_DATE = "01/01/2013"
-# START_DATE = Date.strptime(START_DATE, '%m/%d/%Y')
 file = './transactions.csv'
-now = Date.today
-ninety_days_ago = (now - 90)
+FILENAME = "./results_monthly_breakdown.csv"
 DATE_FORMAT = '%m/%d/%Y'
 MONTH_FORMAT = '%m/%Y'
-END_DATE = Date.today.strftime(DATE_FORMAT)
-START_DATE = ninety_days_ago
-END_DATE = Date.strptime(END_DATE, DATE_FORMAT)
-FILENAME = "./results_monthly_breakdown.csv"
 
-# TODO: switch the start and end date to be 2014 -> today
-# TODO: Organize into each month
+END_DATE = Date.today
+START_DATE = END_DATE - 90
+
 # Unknown: Can csv create different excel sheet tabs?
-
 
 def main(file)
   CSV.open(FILENAME, "wb") # New file
   transactions = read_file(file)
-  transactions.shift # removes the header from the mint export
 
   months = collect_months(transactions)
   months.each do |month|
       puts "MONTH: #{month}"
       sum = 0
       monthly_transactions = collect_month_transactions(transactions, month)
-      # puts monthly_transactions
-      # require 'byebug'; byebug
       CATEGORIES.each do |title, categories|
           category_sum = parse_transactions(monthly_transactions, title, categories)
           sum = sum + category_sum

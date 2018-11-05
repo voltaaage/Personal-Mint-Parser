@@ -20,6 +20,8 @@ def main(file)
 
   months = collect_months(transactions)
   months.each do |month|
+      puts
+      puts "================================================================"
       puts "MONTH: #{month}"
       sum = 0
       monthly_transactions = collect_month_transactions(transactions, month)
@@ -114,8 +116,12 @@ def process(transaction_group, csv)
   sum = 0
   transaction_group.each do |transaction|
     amount = process_amount(transaction)
-    csv << create_csv_row(transaction, amount) if transaction_within_date_range(transaction)
-    sum = sum + amount.to_f
+    if transaction_within_date_range(transaction)
+        csv_row = create_csv_row(transaction, amount)
+        csv << csv_row
+        puts csv_row.join("|")
+        sum = sum + amount.to_f
+    end
   end
 
   sum = sum.round(2)
@@ -155,7 +161,6 @@ def create_csv_row(transaction, amount)
     csv_row << transaction[:category]
     csv_row << transaction[:original_description]
     csv_row << transaction[:notes]
-    puts csv_row.join("|")
     csv_row
 end
 

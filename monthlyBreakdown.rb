@@ -57,26 +57,25 @@ def parse_transactions(transactions, title, category)
   }.sort_by{|t| t[:date]}
 
   CSV.open(FILENAME, "a") do |csv|
-    process_category_data(title, sorted_transactions, csv)
+    monthly_group_data = process_monthly_category_transactions(title, sorted_transactions)
+    monthly_group_data.each do |data|
+        csv << data
+    end
   end
 end
 
-def process_category_data(title, transactions, csv)
-  group_header(title, csv)
-  monthly_transactions_group = get_monthly_transaction_group(transactions, csv)
+def process_monthly_category_transactions(title, transactions)
+  monthly_transactions_group = get_monthly_transaction_group(transactions)
+  monthly_transactions_group.unshift([title])
+  monthly_transactions_group << [""]
   output_monthly_transactions(monthly_transactions_group)
+  monthly_transactions_group
 end
 
 def output_monthly_transactions(monthly_transactions_group)
     monthly_transactions_group.each do |group|
         puts group.join('|')
     end
-end
-
-def group_header(name, csv)
-  puts "\n#{name}"
-  csv << [""]
-  csv << [name]
 end
 
 def read_file(file)
@@ -108,7 +107,7 @@ def read_file(file)
   transactions
 end
 
-def get_monthly_transaction_group(transaction_group, csv)
+def get_monthly_transaction_group(transaction_group)
     monthly_transaction_group = []
     monthly_transaction_group << group_table_headers_csv_output
 

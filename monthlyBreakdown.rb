@@ -23,16 +23,9 @@ def main(file)
       puts
       puts "================================================================"
       puts "MONTH: #{month}"
-      sum = 0
       monthly_transactions = collect_month_transactions(transactions, month)
       CATEGORIES.each do |title, categories|
-          category_sum = parse_transactions(monthly_transactions, title, categories)
-          sum = sum + category_sum
-      end
-
-      CSV.open(FILENAME, "a") do |csv|
-          csv << [""]
-          csv << ["Total of all Transactions: ", sum]
+          parse_transactions(monthly_transactions, title, categories)
       end
   end
 end
@@ -64,14 +57,20 @@ def parse_transactions(transactions, title, category)
   }.sort_by{|t| t[:date]}
 
   CSV.open(FILENAME, "a") do |csv|
-    category_sum = process_category_data(title, sorted_transactions, csv)
+    process_category_data(title, sorted_transactions, csv)
   end
 end
 
 def process_category_data(title, transactions, csv)
   group_header(title, csv)
-  sum = process(transactions, csv)
-  sum
+  monthly_transactions_group = get_monthly_transaction_group(transactions, csv)
+  output_monthly_transactions(monthly_transactions_group)
+end
+
+def output_monthly_transactions(monthly_transactions_group)
+    monthly_transactions_group.each do |group|
+        puts group.join('|')
+    end
 end
 
 def group_header(name, csv)
@@ -109,30 +108,26 @@ def read_file(file)
   transactions
 end
 
-def process(transaction_group, csv)
-    puts group_table_headers_console_output
-    csv << group_table_headers_csv_output
+def get_monthly_transaction_group(transaction_group, csv)
+    monthly_transaction_group = []
+    monthly_transaction_group << group_table_headers_csv_output
 
-  sum = 0
-  transaction_group.each do |transaction|
-    amount = process_amount(transaction)
-    if transaction_within_date_range(transaction)
-        csv_row = create_csv_row(transaction, amount)
-        csv << csv_row
-        puts csv_row.join("|")
-        sum = sum + amount.to_f
+    sum = 0
+    transaction_group.each do |transaction|
+        amount = process_amount(transaction)
+        if transaction_within_date_range(transaction)
+            monthly_transaction_group << create_csv_row(transaction, amount)
+            sum = sum + amount.to_f
+        end
     end
-  end
-
-  sum = sum.round(2)
-  puts "Total: $#{sum}"
-  csv << ["Total: ", "#{sum}"]
-  sum
+    sum = sum.round(2)
+    monthly_transaction_group << ["Total", " #{sum}"]
+    monthly_transaction_group
 end
 
-def group_table_headers_console_output
-  "Date|Description|Amount|Category|Original_Description|Notes"
-end
+# def group_table_headers_console_output
+#   "Date|Description|Amount|Category|Original_Description|Notes"
+# end
 
 def group_table_headers_csv_output
   [ "Date", "Description", "Amount", "Category", "Original_Description", "Notes"]

@@ -18,14 +18,19 @@ def main(file)
   CSV.open(FILENAME, "wb") # New file
   transactions = read_file(file)
 
+  # TODO: split transactions in months and category here
   months = collect_months(transactions)
   months.each do |month|
       puts
       puts "================================================================"
       puts "MONTH: #{month}"
-      monthly_transactions = collect_month_transactions(transactions, month)
       CATEGORIES.each do |title, categories|
-          parse_transactions(monthly_transactions, title, categories)
+          monthly_group_data = all_transactions_in_month_and_category(transactions, title, month, categories)
+          CSV.open(FILENAME, "a") do |csv|
+              monthly_group_data.each do |data|
+                  csv << data
+              end
+          end
       end
   end
 end
@@ -39,32 +44,21 @@ def collect_months(transactions)
     months.uniq
 end
 
-def collect_month_transactions(transactions, month)
-      month_transactions = transactions.select do |transaction|
+def all_transactions_in_month_and_category(transactions, title, month, category)
+    sorted_transactions = transactions.select{|transaction|
+        start_of_month = Date.strptime(month, MONTH_FORMAT).at_beginning_of_month
+        end_of_month = Date.strptime(month, MONTH_FORMAT).at_end_of_month
+        transaction_date = Date.strptime(transaction[:date], DATE_FORMAT)
 
-          start_of_month = Date.strptime(month, MONTH_FORMAT).at_beginning_of_month
-          end_of_month = Date.strptime(month, MONTH_FORMAT).at_end_of_month
-          transaction_date = Date.strptime(transaction[:date], DATE_FORMAT)
+        transaction_date >= start_of_month &&
+            transaction_date <= end_of_month &&
+            category.include?(transaction[:category])
+    }.sort_by{|t| t[:date]}
 
-          transaction_date >= start_of_month && transaction_date <= end_of_month
-      end
-      month_transactions
+    monthly_category_transactions_in_csv(title, sorted_transactions)
 end
 
-def parse_transactions(transactions, title, category)
-  sorted_transactions = transactions.select{|transaction|
-    category.include?(transaction[:category])
-  }.sort_by{|t| t[:date]}
-
-  CSV.open(FILENAME, "a") do |csv|
-    monthly_group_data = process_monthly_category_transactions(title, sorted_transactions)
-    monthly_group_data.each do |data|
-        csv << data
-    end
-  end
-end
-
-def process_monthly_category_transactions(title, transactions)
+def monthly_category_transactions_in_csv(title, transactions)
   monthly_transactions_group = get_monthly_transaction_group(transactions)
   monthly_transactions_group.unshift([title])
   monthly_transactions_group << [""]

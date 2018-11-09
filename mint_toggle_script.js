@@ -26,9 +26,9 @@ var showInputs = inputsAsArray.filter(input => input.value === 'showeverywhere')
 var hideInputs = inputsAsArray.filter(input => input.value === 'hideeverywhere')
 showInputs.forEach(input => input.click())
 hideInputs[1].click()
-hideInputs[13].click()
 hideInputs[14].click()
 hideInputs[15].click()
+hideInputs[16].click()
 
 // Purely Liquid Assets - Without all investments
 var inputs = document.getElementsByTagName('input');

@@ -10,7 +10,8 @@ DATE_FORMAT = '%m/%d/%Y'
 MONTH_FORMAT = '%m/%Y'
 
 END_DATE = Date.today
-START_DATE = END_DATE - 90
+START_DATE = END_DATE - 60
+puts START_DATE
 
 # Unknown: Can csv create different excel sheet tabs?
 
@@ -123,7 +124,7 @@ end
 # end
 
 def group_table_headers_csv_output
-  [ "Date", "Description", "Amount", "Category", "Original_Description", "Notes"]
+  [ "Date", "Description", "Amount"] # , "Category", "Original_Description", "Notes"]
 end
 
 def date_within_date_range(date)
@@ -146,9 +147,9 @@ def create_csv_row(transaction, amount)
     csv_row << transaction[:date]
     csv_row << transaction[:description]
     csv_row << amount
-    csv_row << transaction[:category]
-    csv_row << transaction[:original_description]
-    csv_row << transaction[:notes]
+    # csv_row << transaction[:category]
+    # csv_row << transaction[:original_description]
+    # csv_row << transaction[:notes]
     csv_row
 end
 

@@ -10,25 +10,25 @@ var inputsAsArray = Array.prototype.slice.call( inputs )
 var showInputs = inputsAsArray.filter(input => input.value === 'showeverywhere')
 var hideInputs = inputsAsArray.filter(input => input.value === 'hideeverywhere')
 hideInputs.forEach(input => input.click())
-showInputs[3].click()
-showInputs[8].click()
-showInputs[9].click()
-showInputs[10].click()
-showInputs[12].click()
-showInputs[13].click()
-showInputs[17].click()
-showInputs[19].click()
+showInputs[accounts['capitalOneChecking']].click()
+showInputs[accounts['chaseAmazon']].click()
+showInputs[accounts['chaseSapphireReserve']].click()
+showInputs[accounts['chaseFreedom']].click()
+showInputs[accounts['discover1']].click()
+showInputs[accounts['discover2']].click()
+showInputs[accounts['nordstrom']].click()
+showInputs[accounts['chaseChecking']].click()
 
-// Liquid Assets - Without 401k
+// Liquid Assets - Without IRAs
 var inputs = document.getElementsByTagName('input');
 var inputsAsArray = Array.prototype.slice.call( inputs )
 var showInputs = inputsAsArray.filter(input => input.value === 'showeverywhere')
 var hideInputs = inputsAsArray.filter(input => input.value === 'hideeverywhere')
 showInputs.forEach(input => input.click())
-hideInputs[1].click()
-hideInputs[14].click()
-hideInputs[15].click()
-hideInputs[16].click()
+hideInputs[accounts['fidelityEpic']].click()
+hideInputs[accounts['fidelityExpedia']].click()
+hideInputs[accounts['bettermentRoth']].click()
+hideInputs[accounts['vanguardRoth']].click()
 
 // Purely Liquid Assets - Without all investments
 var inputs = document.getElementsByTagName('input');
@@ -36,14 +36,38 @@ var inputsAsArray = Array.prototype.slice.call( inputs )
 var showInputs = inputsAsArray.filter(input => input.value === 'showeverywhere')
 var hideInputs = inputsAsArray.filter(input => input.value === 'hideeverywhere')
 hideInputs.forEach(input => input.click())
-showInputs[3].click()
-showInputs[4].click()
-showInputs[6].click()
-showInputs[7].click()
-showInputs[8].click()
-showInputs[9].click()
-showInputs[10].click()
-showInputs[11].click()
-showInputs[12].click()
-showInputs[16].click()
-showInputs[18].click()
+showInputs[accounts['capitalOneChecking']].click()
+showInputs[accounts['chaseAmazon']].click()
+showInputs[accounts['chaseSapphireReserve']].click()
+showInputs[accounts['chaseFreedom']].click()
+showInputs[accounts['discover1']].click()
+showInputs[accounts['discover2']].click()
+showInputs[accounts['nordstrom']].click()
+showInputs[accounts['chaseChecking']].click()
+showInputs[accounts['capitalOneMM']].click()
+showInputs[accounts['capitalOneSavings']].click()
+
+var accounts = {
+    betterment:           0,
+    bettermentRoth:       1,
+    bettermentSavings:    2,
+    bettermentSmart:      3,
+    capitalOneChecking:   4,
+    capitalOneMM:         5,
+    capitalOneSavings:    6,
+    chaseAmazon:          7,
+    chaseSavings:         8,
+    chaseSapphireReserve: 9,
+    chaseFreedom:         10,
+    chaseChecking:        11,
+    discover1:            12,
+    discover2:            13,
+    fidelityEpic:         14,
+    fidelityExpedia:      15,
+    m1Finance:            16,
+    nordstrom:            17,
+    vanguardBrokerage:    18,
+    vanguardRoth:         19,
+    wealthfrontLine:      20,
+    wealthfront:          21,
+}

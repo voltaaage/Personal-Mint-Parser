@@ -26,6 +26,7 @@ CATEGORIES = {
     "Bonus",
     "Books",
     "Check",
+    "Charity",
     "Clothing",
     "Dentist",
     "Doctor",

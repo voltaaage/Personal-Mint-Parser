@@ -10,7 +10,7 @@ DATE_FORMAT = '%m/%d/%Y'
 MONTH_FORMAT = '%m/%Y'
 
 END_DATE = Date.today
-START_DATE = END_DATE - 60
+START_DATE = END_DATE - 90
 puts START_DATE
 
 # Unknown: Can csv create different excel sheet tabs?
